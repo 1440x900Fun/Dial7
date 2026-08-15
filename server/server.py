@@ -7,7 +7,7 @@
 import numpy as np
 from scipy.io import wavfile
 import wave
-import pyaudio
+import pyaudio, socket
 
 p = pyaudio.PyAudio()
 # needs bi-dir full dupe comms
@@ -26,7 +26,7 @@ def audiosine(f=440.0, t=3.0, s=8000, v=0.5, fn="s.wav"):
   audio = (wave * v * 255).astype(np.int16) # 8bit
   wavfile.write(fn, s, audio)
 
-HOST = ""
+HOST = socket.gethostname()
 PORT = 100
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
