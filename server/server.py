@@ -78,6 +78,7 @@ def audiosine(f=440.0, t=3.0, s=8000, v=0.5, fn="s.wav"):
   #  audio = (wave * v * 32767).astype(np.int16) 16bit
   audio = (wave * v * 255).astype(np.int16) # 8bit
   wavfile.write(fn, s, audio)
+
 HOST = socket.gethostname()
 PORT = 100
 FORMAT = pyaudio.paInt8
@@ -87,45 +88,34 @@ WAVE_OUTPUT_FILENAME = "srvoutput.wav"
 frames = []
 
 def server_rx(HOST,PORT):
-  global frames
-  with socket.socket() as server_socket_rx:
-    server_socket.bind((HOST, PORT))
-    server_socket.listen(1)
-    conn, address = server_socket.accept()
-    print("New Client Connection: " + address[0] + ":" + str(address[1]))
-    tick = 0
-    while True:
-        tick = tick + 1
-        freqs, results = goertzel(some_samples, 44100, (400, 500), (1000, 1100))
-        try:
+    global frames
+    
+    with socket.socket() as server_socket_rx:
+        server_socket.bind((HOST, PORT))
+        server_socket.listen(1)
+        conn, address = server_socket.accept()
+        print("New Client Connection: " + address[0] + ":" + str(address[1]))
+        tick = 0
+        inf = [1,0,0,0,0,0,"none"] # [dialtone,isdialing?,busy,fastbusy,offhook,iscallconnected?,connectednumber]
+        #                                0        1        2       3        4            5            6
+        while True:
+            tick = tick + 1
+            # logic
             data = conn.recv(2048)
             frames.append(data)
-        except socket.error as error_message:
-            break
+            if inf[0] == 1:
+                # Party just connected, Dial active
+                # listen for dtmf
+                freqs, results = goertzel(some_samples, 8000, (400, 500), (1000, 1100))
+            try:
+            except socket.error as error_message:
+                break
           
-def server_tx(HOST,PORT):
-  global frames
-  with socket.socket() as server_socket_rx:
-    server_socket.bind((HOST, PORT))
-    server_socket.listen(1)
-    conn, address = server_socket.accept()
-    print("New Client Connection: " + address[0] + ":" + str(address[1])) # ACTIVE
-    tick = 0 # Start at tick 0
-    # [dialtone,isdialing,busy,]
-    inf = []
-    while True:
-      tick = tick + 1
-      print("Current tick: ",tick)
-        try:
-            data = conn.recv(2048)
-            frames.append(data)
-        except socket.error as error_message:
-            break
 
 
-tx = threading.Thread(target=get_url, args = (q,u))
-#tx.daemon = True
-tx.start()
+rx = threading.Thread(target=server_rx, args = (HOST,PORT))
+#rx.daemon = True
+rx.start()
 
 print(frames)
 
