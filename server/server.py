@@ -12,7 +12,7 @@ numbers = {
     "0":          "192.168.0.1",
     "1921680143": "192.168.0.143",
     "1921680148": "192.168.0.148",
-    "7166338367": "192.168.0.145"
+    "7161111111": "192.168.0.145"
 }
 
 nextroute = "192.168.0.150" # IP of server with other number database if local network database is not suffciant, contact other router
