@@ -75,19 +75,13 @@ ring = (440,480)
 zip = (440,-1)
 HOST = socket.gethostname()
 PORT = 8080
-
 import math
-
 from math import cos
 from math import exp
 from math import pi
-
-
-
 #        zero           one        two        three        four        five        six        seven        eight       nine        star        pound        
 DTMF = [(941,1336), (697,1209), (697,1336), (697,1477), (770,1209), (770,1336), (770,1477), (852,1209), (852,1336), (852,1477), (941,1209), (941,1477)] # [(low,high)]
 #           0           1           2           3           4           5           6           7           8           9           10          11
-
 import time
 def server_rx(HOST,PORT):
     global frames
@@ -173,15 +167,8 @@ def server_rx(HOST,PORT):
                         print("Connecting the calling party...")
                         inf[1] = 0
                         inf[2] = 1
-                        
-
-                    
-                
-                    
-                        
             except socket.error as error_message:
                 break
-          
 rx = threading.Thread(target=server_rx, args = (HOST,PORT))
 rx.start()
 print("Dial7 - Server online")
